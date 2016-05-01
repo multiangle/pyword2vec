@@ -1,7 +1,11 @@
 __author__ = 'multiangle'
 
-import jieba
+
 from collections import Counter
+from operator import itemgetter as _itemgetter
+
+import jieba
+
 import File_Interface as FI
 
 class WordCounter():
@@ -29,7 +33,7 @@ class WordCounter():
             self.cutted_text_list.append(res)
             filtered_word_list += res
 
-        self.word_set = Counter(filtered_word_list)
+        self.word_set = MulCounter(filtered_word_list)
 
     def Filter_Stop_Words(self,word_list):
         for i in range(word_list.__len__())[::-1]:
@@ -45,10 +49,56 @@ class WordCounter():
             except:
                 pass
 
-# class MulCounter(Counter):
-#     def __init__(self,element_list):
-#         self.Counter.__init__(element_list)
-#         self.
+class MulCounter(Counter):
+    def __init__(self,element_list):
+        super().__init__(element_list)
+
+    def larger_than(self,minvalue,ret='list'):
+        temp = sorted(self.items(),key=_itemgetter(1),reverse=True)
+        low = 0
+        high = temp.__len__()
+        while(high - low > 1):
+            mid = (low+high) >> 1
+            if temp[mid][1] >= minvalue:
+                low = mid
+            else:
+                high = mid
+        if temp[low][1]<minvalue:
+            if ret=='dict':
+                return {}
+            else:
+                return []
+        if ret=='dict':
+            ret_data = {}
+            for ele,count in temp[:high]:
+                ret_data[ele]=count
+            return ret_data
+        else:
+            return temp[:high]
+
+    def less_than(self,maxvalue,ret='list'):
+        temp = sorted(self.items(),key=_itemgetter(1))
+        low = 0
+        high = temp.__len__()
+        while ((high-low) > 1):
+            mid = (low+high) >> 1
+            if temp[mid][1] <= maxvalue:
+                low = mid
+            else:
+                high = mid
+        if temp[low][1]>maxvalue:
+            if ret=='dict':
+                return {}
+            else:
+                return []
+        if ret=='dict':
+            ret_data = {}
+            for ele,count in temp[:high]:
+                ret_data[ele]=count
+            return ret_data
+        else:
+            return temp[:high]
+
 
 
 if __name__ == '__main__':
@@ -56,5 +106,12 @@ if __name__ == '__main__':
     # text =[ x['dealed_text']['left_content'][0] for x in text]
     # wc = WordCounter(text)
     wc = FI.load_pickle('./static/test.pkl')
-    x = Counter(wc.word_set)
+    x = MulCounter(wc.word_set)
+    x = x.larger_than(5,ret='dict')
     print(x)
+    # print(sorted(x.items(),key=lambda x:x[1]))
+    # print(x)
+
+    # c=MulCounter('abcdeabcdaffbcabag')
+    # print(sorted(c.items(),key=_itemgetter(1),reverse=True))
+    # print(c.larger_than(1))
