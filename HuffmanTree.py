@@ -69,7 +69,7 @@ class HuffmanTree():
 
     def merge(self,node1,node2):
         top_pos = node1.possibility + node2.possibility
-        top_node = HuffmanTreeNode(np.zeros(self.vec_len), top_pos)
+        top_node = HuffmanTreeNode(np.zeros([1,self.vec_len]), top_pos)
         if node1.possibility >= node2.possibility :
             top_node.left = node1
             top_node.right = node2
