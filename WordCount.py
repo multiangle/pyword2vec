@@ -3,53 +3,55 @@ __author__ = 'multiangle'
 
 from collections import Counter
 from operator import itemgetter as _itemgetter
-
 import jieba
-
 import File_Interface as FI
 
 class WordCounter():
-    def __init__(self, ori_text_list):
-        self.ori_text_list = ori_text_list
-        self.stop_word = self.Get_Stop_Words()
-        self.cutted_text_list = []
-        self.word_set = None
+    # can calculate the freq of words in a text list
 
-        self.Word_Count(self.ori_text_list)
+    # for example
+    # >>> data = ['Merge multiple sorted inputs into a single sorted output',
+    #           'The API below differs from textbook heap algorithms in two aspects']
+    # >>> wc = WordCounter(data)
+    # >>> print(wc.count_res)
+
+    # >>> MulCounter({' ': 18, 'sorted': 2, 'single': 1, 'below': 1, 'inputs': 1, 'The': 1, 'into': 1, 'textbook': 1,
+    #                'API': 1, 'algorithms': 1, 'in': 1, 'output': 1, 'heap': 1, 'differs': 1, 'two': 1, 'from': 1,
+    #                'aspects': 1, 'multiple': 1, 'a': 1, 'Merge': 1})
+
+    def __init__(self, text_list):
+        self.text_list = text_list
+        self.stop_word = self.Get_Stop_Words()
+        self.count_res = None
+
+        self.Word_Count(self.text_list)
 
     def Get_Stop_Words(self):
         ret = []
         ret = FI.load_pickle('./static/stop_words.pkl')
         return ret
 
-    def Word_Count(self,text_list,cut_all=True):
+    def Word_Count(self,text_list,cut_all=False):
 
         filtered_word_list = []
-
+        count = 0
         for line in text_list:
             res = jieba.cut(line,cut_all=cut_all)
             res = list(res)
-            self.Filter_Stop_Words(res)
-            self.cutted_text_list.append(res)
+            text_list[count] = res
+            count += 1
             filtered_word_list += res
 
-        self.word_set = MulCounter(filtered_word_list)
-
-    def Filter_Stop_Words(self,word_list):
-        for i in range(word_list.__len__())[::-1]:
-
-            if word_list[i] in self.stop_word:
-                word_list.pop(i)
-                continue
-
-            try:  # replace the number to 'number'
-                int(word_list[i])
-                word_list[i] = "/number"
-                continue
+        self.count_res = MulCounter(filtered_word_list)
+        for word in self.stop_word:
+            try:
+                self.count_res.pop(word)
             except:
                 pass
 
 class MulCounter(Counter):
+    # a class extends from collections.Counter
+    # add some methods, larger_than and less_than
     def __init__(self,element_list):
         super().__init__(element_list)
 
@@ -99,16 +101,20 @@ class MulCounter(Counter):
         else:
             return temp[:high]
 
-
-
 if __name__ == '__main__':
     # text = FI.load_pickle('./static/demo.pkl')
     # text =[ x['dealed_text']['left_content'][0] for x in text]
     # wc = WordCounter(text)
-    wc = FI.load_pickle('./static/test.pkl')
-    x = MulCounter(wc.word_set)
-    x = x.larger_than(5,ret='dict')
-    print(x)
+    # print(wc.count_res.larger_than(5))
+
+    data = ['Merge multiple sorted inputs into a single sorted output','The API below differs from textbook heap algorithms in two aspects']
+    wc = WordCounter(data)
+    c = wc.count_res
+    print(sum(c.values()))
+
+
+    # wc = FI.load_pickle('./static/test.pkl')
+
     # print(sorted(x.items(),key=lambda x:x[1]))
     # print(x)
 
