@@ -191,11 +191,11 @@ class Word2Vec():
 if __name__ == '__main__':
     # text = FI.load_pickle('./static/demo.pkl')
     # text =[ x['dealed_text']['left_content'][0] for x in text]
-    # data = ['Merge multiple sorted inputs into a single sorted output','The API below differs from textbook heap algorithms in two aspects']
-    # wv = Word2Vec(vec_len=50)
+    # # data = ['Merge multiple sorted inputs into a single sorted output','The API below differs from textbook heap algorithms in two aspects']
+    # wv = Word2Vec(vec_len=500)
     # wv.Train_Model(text)
     # FI.save_pickle(wv.word_dict,'./static/wv.pkl')
-
+    #
     # data = FI.load_pickle('./static/wv.pkl')
     # x = {}
     # for key in data:
@@ -209,4 +209,5 @@ if __name__ == '__main__':
         return data[key1].dot(data[key2].T)[0][0]
     keys=list(x.keys())
     for key in keys:
-        print(key,'\t',cal_simi(x,'中国队',key))
+        print(key,'\t',cal_simi(x,'姚明',key))
+

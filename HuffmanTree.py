@@ -24,9 +24,9 @@ class HuffmanTree():
 
         word_dict_list = list(word_dict.values())
         node_list = [HuffmanTreeNode(x['word'],x['possibility']) for x in word_dict_list]
-        self.build_tree(node_list)
+        # self.build_tree(node_list)
         self.build_CBT(node_list)
-        # self.generate_huffman_code(self.root, word_dict)
+        self.generate_huffman_code(self.root, word_dict)
 
     def build_tree(self,node_list):
         node_list.sort(key=lambda x:x.possibility,reverse=True)
