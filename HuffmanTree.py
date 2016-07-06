@@ -10,7 +10,7 @@ class HuffmanTreeNode():
         self.right = None
         # value of leaf node  will be the word, and be
         # mid vector in tree node
-        self.value = value
+        self.value = value # the value of word
         self.Huffman = "" # store the huffman code
 
     def __str__(self):
@@ -25,7 +25,8 @@ class HuffmanTree():
         word_dict_list = list(word_dict.values())
         node_list = [HuffmanTreeNode(x['word'],x['possibility']) for x in word_dict_list]
         self.build_tree(node_list)
-        self.generate_huffman_code(self.root, word_dict)
+        self.build_CBT(node_list)
+        # self.generate_huffman_code(self.root, word_dict)
 
     def build_tree(self,node_list):
         node_list.sort(key=lambda x:x.possibility,reverse=True)
@@ -33,6 +34,21 @@ class HuffmanTree():
             top_node = self.merge(node_list[i],node_list[i+1])
             node_list.insert(i,top_node)
         self.root = node_list[0]
+
+    def build_CBT(self,node_list): # build a complete binary tree
+        node_list.sort(key=lambda  x:x.possibility,reverse=True)
+        node_num = node_list.__len__()
+        before_start = 0
+        while node_num>1 :
+            for i in range(node_num>>1):
+                top_node = self.merge(node_list[before_start+i*2],node_list[before_start+i*2+1])
+                node_list.append(top_node)
+            if node_num%2==1:
+                top_node = self.merge(node_list[before_start+i*2+2],node_list[-1])
+                node_list[-1] = top_node
+            before_start = before_start + node_num
+            node_num = node_num>>1
+        self.root = node_list[-1]
 
     def generate_huffman_code(self, node, word_dict):
         # # use recursion in this edition

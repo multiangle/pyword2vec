@@ -21,13 +21,16 @@ class Word2Vec():
         self.huffman = None    # the object of HuffmanTree
 
     def Load_Word_Freq(self,word_freq_path):
+        # load the info of word frequence
+        # will generate a word dict
         if self.word_dict is not None:
             raise RuntimeError('the word dict is not empty')
         word_freq = FI.load_pickle(word_freq_path)
         self.__Gnerate_Word_Dict(word_freq)
 
     def __Gnerate_Word_Dict(self,word_freq):
-
+        # generate a word dict
+        # which containing the word, freq, possibility, a random initial vector and Huffman value
         if not isinstance(word_freq,dict) and not isinstance(word_freq,list):
             raise ValueError('the word freq info should be a dict or list')
 
@@ -144,6 +147,7 @@ class Word2Vec():
 
         for item in gram_word_list:
             self.word_dict[item]['vector'] += e
+            self.word_dict[item]['vector'] = preprocessing.normalize(self.word_dict[item]['vector'])
 
     def __Deal_Gram_SkipGram(self,word,gram_word_list):
 
@@ -162,6 +166,7 @@ class Word2Vec():
             u_huffman = self.word_dict[u]['Huffman']
             e = self.__GoAlong_Huffman(u_huffman,word_vector,self.huffman.root)
             self.word_dict[word]['vector'] += e
+            self.word_dict[word]['vector'] = preprocessing.normalize(self.word_dict[word]['vector'])
 
     def __GoAlong_Huffman(self,word_huffman,input_vector,root):
 
@@ -173,6 +178,7 @@ class Word2Vec():
             grad = self.learn_rate * (1-int(huffman_charat)-q)
             e += grad * node.value
             node.value += grad * input_vector
+            node.value = preprocessing.normalize(node.value)
             if huffman_charat=='0':
                 node = node.right
             else:
@@ -185,8 +191,8 @@ class Word2Vec():
 if __name__ == '__main__':
     # text = FI.load_pickle('./static/demo.pkl')
     # text =[ x['dealed_text']['left_content'][0] for x in text]
-    # # data = ['Merge multiple sorted inputs into a single sorted output','The API below differs from textbook heap algorithms in two aspects']
-    # wv = Word2Vec(vec_len=100)
+    # data = ['Merge multiple sorted inputs into a single sorted output','The API below differs from textbook heap algorithms in two aspects']
+    # wv = Word2Vec(vec_len=50)
     # wv.Train_Model(text)
     # FI.save_pickle(wv.word_dict,'./static/wv.pkl')
 
@@ -202,14 +208,5 @@ if __name__ == '__main__':
     def cal_simi(data,key1,key2):
         return data[key1].dot(data[key2].T)[0][0]
     keys=list(x.keys())
-    min = 1
-    max = 0
-    for i in range(keys.__len__()):
-        for j in range(i+1,keys.__len__()):
-            v = cal_simi(x,keys[i],keys[j])
-            if v<min :
-                min = v
-            if v>max :
-                max = v
-    print(min,max)
-
+    for key in keys:
+        print(key,'\t',cal_simi(x,'中国队',key))
