@@ -1,9 +1,6 @@
 __author__ = 'multiangle'
 
-__author__ = 'multiangle'
-
 import math
-from WordCount import WordCounter,MulCounter
 import File_Interface as FI
 from operator import itemgetter as _itemgetter
 import numpy as np
