@@ -209,15 +209,37 @@ class HuffmanTree():
 
         word_dict_list = list(word_dict.values())
         node_list = [HuffmanTreeNode(x['word'],x['possibility']) for x in word_dict_list]
-        # self.build_tree(node_list)
-        self.build_CBT(node_list)
+        self.build_tree(node_list)
+        # self.build_CBT(node_list)
         self.generate_huffman_code(self.root, word_dict)
 
     def build_tree(self,node_list):
-        node_list.sort(key=lambda x:x.possibility,reverse=True)
-        for i in range(node_list.__len__()-1)[::-1]:
-            top_node = self.merge(node_list[i],node_list[i+1])
-            node_list.insert(i,top_node)
+        # node_list.sort(key=lambda x:x.possibility,reverse=True)
+        # for i in range(node_list.__len__()-1)[::-1]:
+        #     top_node = self.merge(node_list[i],node_list[i+1])
+        #     node_list.insert(i,top_node)
+        # self.root = node_list[0]
+
+        while node_list.__len__()>1:
+            i1 = 0  # i1表示概率最小的节点
+            i2 = 1  # i2 概率第二小的节点
+            if node_list[i2].possibility < node_list[i1].possibility :
+                [i1,i2] = [i2,i1]
+            for i in range(2,node_list.__len__()): # 找到最小的两个节点
+                if node_list[i].possibility<node_list[i2].possibility :
+                    i2 = i
+                    if node_list[i2].possibility < node_list[i1].possibility :
+                        [i1,i2] = [i2,i1]
+            top_node = self.merge(node_list[i1],node_list[i2])
+            if i1<i2:
+                node_list.pop(i2)
+                node_list.pop(i1)
+            elif i1>i2:
+                node_list.pop(i1)
+                node_list.pop(i2)
+            else:
+                raise RuntimeError('i1 should not be equal to i2')
+            node_list.insert(0,top_node)
         self.root = node_list[0]
 
     def build_CBT(self,node_list): # build a complete binary tree
