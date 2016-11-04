@@ -397,12 +397,12 @@ class MulCounter(Counter):
             return temp[:high]
 
 if __name__ == '__main__':
-    text = FI.load_pickle('./static/demo.pkl')
-    text =[ x['dealed_text']['left_content'][0] for x in text]
-    # data = ['Merge multiple sorted inputs into a single sorted output','The API below differs from textbook heap algorithms in two aspects']
+    # text = FI.load_pickle('./static/demo.pkl')
+    # text =[ x['dealed_text']['left_content'][0] for x in text]
+    data = ['Merge multiple sorted inputs into a single sorted output','The API below differs from textbook heap algorithms in two aspects']
     wv = Word2Vec(vec_len=500)
-    wv.Train_Model(text)
-    FI.save_pickle(wv.word_dict,'./static/wv.pkl')
+    wv.Train_Model(data)
+    # FI.save_pickle(wv.word_dict,'./static/wv.pkl')
     #
     # data = FI.load_pickle('./static/wv.pkl')
     # x = {}
